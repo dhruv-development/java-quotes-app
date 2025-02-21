@@ -18,7 +18,7 @@ COPY quotes.txt quotes.txt
 RUN javac Main.java
 
 # Expose port 8000 for the HTTP server
-EXPOSE 8000
+EXPOSE 9000
 
 # Run the Java application when the container starts
 CMD ["java", "Main"]
