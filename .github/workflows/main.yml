@@ -1,4 +1,4 @@
-name: Node CI/CD
+name: Java CI/CD
 on: 
   push: 
     branches: master
