@@ -64,8 +64,8 @@ jobs:
             if [[ -z "$LATEST_TAG" ]]; then
               NEW_TAG="v1"
             else
-              VERSION_NUM=$(echo "$LATEST_TAG" | grep -oE '[0-9]+$')  # Improved regex
-              if [[ -z "$VERSION_NUM" ]]; then # Handle cases where no number is found
+              VERSION_NUM=$(echo "$LATEST_TAG" | grep -oE '[0-9]+$')
+              if [[ -z "$VERSION_NUM" ]]; then
                 NEW_TAG="v1"
               else  
                 NEW_TAG="v$((VERSION_NUM + 1))"
