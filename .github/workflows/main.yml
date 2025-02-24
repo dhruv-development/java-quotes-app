@@ -16,7 +16,7 @@ permissions:
 jobs:
   run-reusable-workflow:
     name: "Java CI/CD"
-    uses: dhruv-development/java-quotes-app/.github/workflows/java-ci-cd.yml@master
+    uses: dhruv-development/reusable_workflows/.github/workflows/java-ci-cd.yml@main
     with:
       role-assume: "arn:aws:iam::410454990341:role/GitHubActionsRole"
       AWS_REGION: "us-east-2"
