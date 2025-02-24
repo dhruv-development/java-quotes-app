@@ -35,7 +35,7 @@ permissions:
   packages: write
 
 jobs:
-  build:
+  BUILD:
     name: "BUILD"
     runs-on: ${{ inputs.runner }}
     steps:
@@ -86,12 +86,9 @@ jobs:
             docker build -t "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" . 
             docker push "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" 
             echo "image=$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
-            # docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
-            # docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-            # echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
   deploy:   
     name: "DEPLOY"
-    needs: build
+    needs: BUILD
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout code 
@@ -117,7 +114,7 @@ jobs:
         with:
           task-definition: java-task-definition.json
           container-name: ${{ inputs.CONTAINER_NAME }}  
-          image: ${{ needs.build.outputs.image }}
+          image: ${{ needs.BUILD.outputs.image }}
 
       - name: Deploy to AWS ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
