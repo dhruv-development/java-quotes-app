@@ -111,7 +111,7 @@ jobs:
         with:
           task-definition: java-task-definition.json
           container-name: ${{ inputs.CONTAINER_NAME }}  
-          image: ${{ needs.build-image.outputs.image }}
+          image: ${{ needs.BUILD.outputs.image }}
 
       - name: Deploy to AWS ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
