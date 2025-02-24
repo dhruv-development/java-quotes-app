@@ -115,6 +115,7 @@ jobs:
           task-definition: java-task-definition.json
           container-name: ${{ inputs.CONTAINER_NAME }}  
           image: ${{ needs.BUILD.outputs.images }}
+          echo "Received image tag: ${{ needs.BUILD.outputs.images }}"
 
       - name: Deploy to AWS ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
