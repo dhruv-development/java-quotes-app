@@ -1,9 +1,9 @@
 name: Java CI/CD
 on: 
-  push: 
-    branches: master
-    paths-ignore:
-      - './.github/workflows/**'
+  # push: 
+  #   branches: master
+  #   paths-ignore:
+  #     - './.github/workflows/**'
 
   workflow_dispatch:
 
