@@ -2,14 +2,15 @@ name: Java CI/CD
 on: 
   push: 
     branches: master
-    # paths-ignore:
-    #   - ./github/workflows/*
+    paths-ignore:
+      - ./.github/workflows/*
 
   workflow_dispatch:
 
 permissions:
   id-token: write
   contents: read
+  actions: read
 
 jobs:
   run-reusable-workflow:
