@@ -1,62 +1,25 @@
 name: Java CI/CD
 on: 
-  # push: 
-    # branches: master
-    # paths-ignore:
-    #   - ./github/workflows/*
+  push: 
+    branches: master
+    paths-ignore:
+      - ./github/workflows/*
+
   workflow_dispatch:
+
 permissions:
   id-token: write
   contents: read
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code 
-        uses: actions/checkout@v4
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::410454990341:role/GitHubActionsRole
-          role-session-name: actionssession
-          aws-region: us-east-2
-      - name: Login to ECR
-        id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v2
-      - name: Build, tag and push image to ecr
-        id: build
-        env:
-          ECR_REGISTRY: ${{steps.ecr-login.outputs.registry}}
-          ECR_REPO: ${{secrets.ECR_REPO}}
-          IMAGE_TAG: ${{github.sha}}
-        run: |
-          # docker buildx create --use
-          # docker buildx build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
-          docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
-      # - name: Generate ECS Task Definition JSON
-      #   run: echo '${{ secrets.TASK_DEFINITION }}' > nodejs-task-definition.json
-      - name: Fetch Task Definition from ECS
-        run: |
-          aws ecs describe-task-definition \
-          --task-definition ${{ secrets.TASK_DEFINITION }} \
-          --query "taskDefinition" \
-          --output json | jq -c > java-task-definition.json
 
-      - name: Fill new image to Task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: java-task-definition.json
-          container-name: ${{secrets.CONTAINER_NAME}}  
-          image: ${{steps.build.outputs.image}}
-      - name: Deploy to AWS ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{secrets.SERVICE}}
-          cluster: ${{secrets.CLUSTER}}
-          wait-for-service-stability: true
-      
-      
+jobs:
+  run-reusable-workflow:
+    name: "Java CI/CD"
+    uses: dhruv-development/java-quotes-app/.github/workflows/java-ci-cd.yml@main
+    with:
+      role-to-assume: "arn:aws:iam::410454990341:role/GitHubActionsRole"
+      AWS_REGION: "us-east-2"
+      ECR_REPO: "java-new"
+      TASK_DEFINITION: "new-java-task-definition"
+      CONTAINER_NAME: "new-java"
+      CLUSTER: "java-new"
+      SERVICE: "new-java-service"
