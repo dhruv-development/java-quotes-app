@@ -83,7 +83,7 @@ jobs:
             echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
             echo "Latest tag: $LATEST_TAG"
             echo "New tag: $NEW_TAG"
-            docker build -t "$ECR_REPO:$NEW_TAG" . 
+            docker build -t "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" . 
             docker push "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" 
             echo "image=$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
             # docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
