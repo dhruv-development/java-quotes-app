@@ -12,9 +12,9 @@ on:
         required: true
         type: string
       runner:
-        required: false 
+        required: true 
         type: string
-        default: "ubuntu-latest"
+        default: ubuntu-latest
       TASK_DEFINITION:
         required: true
         type: string
@@ -34,7 +34,6 @@ permissions:
 
 jobs:
   build:
-    name: "BUILD"
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout code 
@@ -57,32 +56,26 @@ jobs:
           ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
           ECR_REPO: ${{ inputs.ECR_REPO }}
         run: |
-           LATEST_TAG=$(aws ecr describe-images --repository-name $ECR_REPO \
-           --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
-           --output text 2>/dev/null)
+          LATEST_TAG=$(aws ecr describe-images --repository-name $ECR_REPO \
+          --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
+          --output text 2>/dev/null)
 
-            if [[ -z "$LATEST_TAG" ]]; then
-              NEW_TAG="v1"
-            else
-              VERSION_NUM=$(echo "$LATEST_TAG" | grep -oE '[0-9]+$')
-              if [[ -z "$VERSION_NUM" ]]; then
-                NEW_TAG="v1"
-              else  
-                NEW_TAG="v$((VERSION_NUM + 1))"
-              fi
-            fi
+          if [[ "$LATEST_TAG" == "None" || "$LATEST_TAG" == "null" ]]; then
+            NEW_TAG="v1"
+          else
+            VERSION_NUM=$(echo $LATEST_TAG | grep -o '[0-9]*$')
+            NEW_TAG="v$((VERSION_NUM + 1))"
+          fi
 
-            echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
-            echo "Latest tag: $LATEST_TAG"
-            echo "New tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+          echo "Latest tag: $LATEST_TAG"
+          echo "New tag: $NEW_TAG"
 
-            docker build -t "$ECR_REPO:$NEW_TAG" . 
-            docker push "$ECR_REPO:$NEW_TAG" 
-            echo "image=$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
+          docker build -t $ECR_REPO:$NEW_TAG .
+          docker push $ECR_REPO:$NEW_TAG
+          echo "image=$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
 
   deploy:   
-    name: "DEPLOY"
-    needs: build
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout code 
