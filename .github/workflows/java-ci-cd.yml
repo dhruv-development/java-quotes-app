@@ -85,7 +85,7 @@ jobs:
             echo "New tag: $NEW_TAG"
             docker build -t "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" . 
             docker push "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" 
-            echo "image=$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
+            echo "images=$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
   deploy:   
     name: "DEPLOY"
     needs: BUILD
@@ -114,7 +114,7 @@ jobs:
         with:
           task-definition: java-task-definition.json
           container-name: ${{ inputs.CONTAINER_NAME }}  
-          image: ${{ needs.BUILD.outputs.image }}
+          image: ${{ needs.BUILD.outputs.images }}
 
       - name: Deploy to AWS ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
