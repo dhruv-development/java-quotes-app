@@ -85,7 +85,7 @@ jobs:
             echo "New tag: $NEW_TAG"
             docker build -t "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" . 
             docker push "$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" 
-            echo "image=$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
+            echo "image=$ECR_REGISTRY/$ECR_REPO:$NEW_TAG" >> $GITHUB_OUTPUT
             # docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG .
             # docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
             # echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
