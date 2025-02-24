@@ -61,7 +61,7 @@ jobs:
            LATEST_TAG=$(aws ecr describe-images --repository-name $ECR_REPO \
            --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
            --output text 2>/dev/null)
-
+            echo "LATEST_TAG output: $LATEST_TAG"
             if [[ -z "$LATEST_TAG" ]]; then
               NEW_TAG="v1"
             else
